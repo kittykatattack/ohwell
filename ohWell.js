@@ -366,6 +366,7 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
           elapsed = current - ga._startTime;
       
       if (elapsed > 1000) elapsed = ga._frameDuration;
+      //For interpolation:
       ga._startTime = current;
       //Add the elapsed time to the lag counter
       ga._lag += elapsed;
@@ -1896,12 +1897,12 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
           ctx.shadowBlur = sprite.shadowBlur;
         }
         //calculate the render position for interpolation
-        //sprite.renderX = (sprite.gx + sprite.vx) * lagOffset,
-        //sprite.renderY = (sprite.gy + sprite.vy) * lagOffset;
         if(sprite._oldX === undefined) sprite._oldX = sprite.gx;
         if(sprite._oldY === undefined) sprite._oldY = sprite.gy;
         sprite.renderX = (sprite.gx - sprite._oldX) * lagOffset + sprite._oldX;
         sprite.renderY = (sprite.gy - sprite._oldY) * lagOffset + sprite._oldY;
+        //sprite.renderX = sprite.gx + sprite.vx * lagOffset,
+        //sprite.renderY = sprite.gy + sprite.vy * lagOffset;
         //if(!sprite.parent.renderX) sprite.parent.renderX = sprite.parent.gx;
         //if(!sprite.parent.renderY) sprite.parent.renderY = sprite.parent.gy;
         //If the sprite's parent is the stage, position the sprite
@@ -1922,7 +1923,7 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
         }
 
         //The same code without interpolation
-        /*
+        /*  
         if (sprite.parent.stage === true) {
           ctx.translate(
             sprite.gx + sprite.halfWidth,
@@ -1937,8 +1938,6 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
           );
         }
         */
-        
-
         //Rotate the sprite using its `rotation` value.
         ctx.rotate(sprite.rotation);
         //Scale the sprite using its `scaleX` and scaleY` properties.
@@ -3380,6 +3379,18 @@ GA.custom = function(ga) {
     ga.canvas.style.marginLeft = "auto";
     ga.canvas.style.marginRight = "auto";
     ga.canvas.style.display = "block";
+
+    //Fix some quirkiness in scaling for Safari
+    var ua = navigator.userAgent.toLowerCase(); 
+    if (ua.indexOf('safari') != -1) { 
+      if (ua.indexOf('chrome') > -1) {
+        // Chrome
+      } else {
+        // Safari
+        ga.canvas.style.maxHeight = "100%";
+        ga.canvas.style.minHeight = "100%";
+      }
+    }
     
     //Set ga to the correct scale. This important for correct hit testing
     //between the pointer and sprites
@@ -3651,27 +3662,27 @@ function setup() {
     colorIndex: 0,
     colors: [
       //0-9
-      ["#FFABAB", "#FFDAAB", "#DDFFAB", "#ABE4FF", "#D9ABFF"],
-      ["#BCB968", "#ECB3BA", "#CCD4BD", "#9E3B36", "#FCA055"],
+      ["#8EF38E", "#F992CE", "#15A2D1", "#FF944D", "#816DE4"],
       ["#CC353A", "#ADCC6B", "#F1F690", "#6A9674", "#FFA825"],
-      ["#FFF381", "#C87CFF", "#B89CFF", "#EBD7FF", "#D05D7E"],
-      ["#B2FFA9", "#F5A9FF", "#FFF8D3", "#FFE38F", "#F30303"],
+      ["#FFABAB", "#FFDAAB", "#DDFFAB", "#ABE4FF", "#D9ABFF"],
+      ["#9D7E79", "#CCAC95", "#9A947C", "#748B83", "#5B756C"],
+      ["#5E9FA3", "#DCD1B4", "#FAB87F", "#F87E7B", "#B05574"],
       ["#FFD4DF", "#FDF7DF", "#C7C572", "#7A69F6", "#EE7A7A"],
       ["#E3B0A6", "#E3C4A6", "#E8E3B3", "#A8B8A3", "#AEA3B8"],
       ["#FDDE37", "#CADBF1", "#EE0BAB", "#EEB8E7", "#9233DA"],
       ["#D8D79C", "#8978F2", "#D986E5", "#EFB3C0", "#E54773"],
       ["#5779FF", "#FEFF69", "#C035FF", "#FF2EC3", "#5AFFC2"],
       //10-19
-      ["#69D2E7", "#A7DBD8", "#E0E4CC", "#F38630", "#FA6900"],
-      ["#ECD078", "#D95B43", "#C02942", "#542437", "#53777A"],
-      ["#556270", "#4ECDC4", "#C7F464", "#FF6B6B", "#C44D58"],
-      ["#CFF09E", "#A8DBA8", "#79BD9A", "#3B8686", "#0B486B"],
-      ["#774F38", "#E08E79", "#F1D4AF", "#ECE5CE", "#C5E0DC"],
-      ["#E8DDCB", "#CDB380", "#036564", "#033649", "#031634"],
-      ["#D1F2A5", "#EFFAB4", "#FFC48C", "#FF9F80", "#F56991"],
-      ["#490A3D", "#BD1550", "#E97F02", "#F8CA00", "#8A9B0F"],
-      ["#D9CEB2", "#948C75", "#D5DED9", "#7A6A53", "#99B2B7"],
-      ["#594F4F", "#547980", "#45ADA8", "#9DE0AD", "#E5FCC2"],
+      ["#001449", "#012677", "#005BC5", "#00B4FC", "#17F9FF"],
+      ["#F9BA15", "#900402", "#8EAC00", "#127A97", "#452B72"],
+      ["#899AA1", "#BDA2A2", "#FBBE9A", "#FAD889", "#FAF5C8"],
+      ["#2F2BAD", "#AD2BAD", "#E42692", "#F7DB15", "#58B5A8"],
+      ["#434367", "#0A8690", "#86BD55", "#FBEC5F", "#F9A600"],
+      ["#EB9D8D", "#93865A", "#A8BB9A", "#C5CBA6", "#EFD8A9"],
+      ["#67484D", "#C5AB70", "#F7DFB9", "#DA9B97", "#C95074"],
+      ["#AB505E", "#D9A071", "#CFC88F", "#A5B090", "#607873"],
+      ["#B877A8", "#B8008A", "#FF3366", "#FFCC33", "#CCFF33"],
+      ["#FF0092", "#FFCA1B", "#B6FF00", "#228DFF", "#BA01FF"]
     ],
     emit: function() {
       //Create a block with a random color
@@ -3737,7 +3748,8 @@ function setup() {
     },
   };
   //Choose a random starting color scheme
-  blockEmitter.colorIndex = g.random(0, blockEmitter.colors.length - 1);
+  //blockEmitter.colorIndex = g.random(0, blockEmitter.colors.length - 1);
+  blockEmitter.colorIndex = 0;
   //Start the emitter
   //(The gameStartButton starts it)
   
@@ -3759,7 +3771,7 @@ function setup() {
   lethalScoreValue = 1;
   lethalScore = false;
   maxHeight = 0;
-  level = 1;
+  level = 99;
   levelText.content = level + "/99";
   doorEntered = false;
   //The player can only score points for reaching a higher level
@@ -3926,7 +3938,7 @@ function play() {
             }
           }
         }
-        else if(eekVsBlock === "top" && eek.vy <= 0) {
+        else if(eekVsBlock === "top" && eek.vy <= 0 && eek.alpha > 0) {
           eek.vy = 0;
           if (b1.vy !== 0) {
             //Get eek's current level and find out the difference between it
@@ -3937,7 +3949,7 @@ function play() {
             score -= negativeScore;
             if (levelScore < 0) levelScore = 0;
             if (score < 0) score = 0;
-            console.log("score: " + score + ", levelScore: " + levelScore);
+            //console.log("score: " + score + ", levelScore: " + levelScore);
             if (levelScore === 0 && lethalScore) {
               endGame();
             } else {  
@@ -4130,7 +4142,6 @@ function removeEek() {
   eek.alpha = 0;
   eek.vx = 0;
   eek.vy = 0;
-  setNewPosition();
   //eek.x = 0;
   //eek.y = 0;
   eek.gravity = 0;
@@ -4141,6 +4152,7 @@ function removeEek() {
   });
 
   function reset() {
+    setNewPosition();
     var fadeInEek = g.fadeIn(eek, 0.02);
     fadeInEek.onComplete = function() {
       g.resume();
@@ -4154,11 +4166,13 @@ function removeEek() {
   function setNewPosition() {
     //Set eek to a position near the bottom of the deepest column
     var deepest = findDeepestColumn(),
-        randomX = (deepest.column * world.tilewidth) + ((world.tilewidth / 2) - (eek.width / 2));
+        randomX = (deepest.column * world.tilewidth) + ((world.tilewidth / 2) - (eek.halfWidth));
 
     //Set eek to the new position
     eek.y = world.height - 200 - (world.height - (deepest.depth * world.tileheight));
     eek.x = randomX;
+
+    //console.log("deepest.column: " + deepest.column + "randomX: " + randomX);
   }
 }
 
@@ -4385,23 +4399,24 @@ function createNewLevel(levelType) {
   blockEmitter.finished = false;
   blockEmitter.frameCounter = 0;
   blockEmitter.resume();
-  //blockEmitter.colorIndex = level - 1;
-  blockEmitter.colorIndex += 1
   
-  if (blockEmitter.colorIndex > blockEmitter.colors.length - 1) {
-    blockEmitter.colorIndex = 0;
-  }
-  
-  //Reduce the time by the block emitter's increment amount
-  blockEmitter.time -= blockEmitter.increment;
-
   //Reset game variables
   doorEntered = false;
   towerFinished = false;
   negativeScore = 0;
-  if (levelType !== "reset") levelScore = 0;
+  if (levelType !== "reset") {
+    levelScore = 0;
+    //Reduce the time by the block emitter's increment amount
+    blockEmitter.time -= blockEmitter.increment;
+    //blockEmitter.colorIndex = level - 1;
+    blockEmitter.colorIndex += 1
+    if (blockEmitter.colorIndex > blockEmitter.colors.length - 1) {
+      blockEmitter.colorIndex = 0;
+    }
+  }
   negativeScoreText.visible = false;
   currentLevelScoreText.fillStyle = "#7FFF00";
+  currentLevelScoreText.content = 0;
 }
 
 function burst(sprite) {
@@ -4440,7 +4455,7 @@ function buildGUI() {
   negativeScoreText.visible = false;
   //Level text
   levelText = g.text("1/99", "20px Futura, sans-serif", "white");
-  levelText.setPosition(240, 6);
+  levelText.setPosition(226, 6);
   //Reset button
   resetText = g.text("reset", "20px Futura, sans-serif", "white");
   resetButton = g.rectangle(64, world.tileheight - 3, "#2F2F2F");

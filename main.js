@@ -238,11 +238,11 @@ function setup() {
     colorIndex: 0,
     colors: [
       //0-9
-      ["#FFABAB", "#FFDAAB", "#DDFFAB", "#ABE4FF", "#D9ABFF"],
-      ["#BCB968", "#ECB3BA", "#CCD4BD", "#9E3B36", "#FCA055"],
+      ["#8EF38E", "#F992CE", "#15A2D1", "#FF944D", "#816DE4"],
       ["#CC353A", "#ADCC6B", "#F1F690", "#6A9674", "#FFA825"],
-      ["#FFF381", "#C87CFF", "#B89CFF", "#EBD7FF", "#D05D7E"],
-      ["#B2FFA9", "#F5A9FF", "#FFF8D3", "#FFE38F", "#F30303"],
+      ["#FFABAB", "#FFDAAB", "#DDFFAB", "#ABE4FF", "#D9ABFF"],
+      ["#9D7E79", "#CCAC95", "#9A947C", "#748B83", "#5B756C"],
+      ["#5E9FA3", "#DCD1B4", "#FAB87F", "#F87E7B", "#B05574"],
       ["#FFD4DF", "#FDF7DF", "#C7C572", "#7A69F6", "#EE7A7A"],
       ["#E3B0A6", "#E3C4A6", "#E8E3B3", "#A8B8A3", "#AEA3B8"],
       ["#FDDE37", "#CADBF1", "#EE0BAB", "#EEB8E7", "#9233DA"],
@@ -324,7 +324,8 @@ function setup() {
     },
   };
   //Choose a random starting color scheme
-  blockEmitter.colorIndex = g.random(0, blockEmitter.colors.length - 1);
+  //blockEmitter.colorIndex = g.random(0, blockEmitter.colors.length - 1);
+  blockEmitter.colorIndex = 0;
   //Start the emitter
   //(The gameStartButton starts it)
   
@@ -346,7 +347,7 @@ function setup() {
   lethalScoreValue = 1;
   lethalScore = false;
   maxHeight = 0;
-  level = 1;
+  level = 99;
   levelText.content = level + "/99";
   doorEntered = false;
   //The player can only score points for reaching a higher level
@@ -513,7 +514,7 @@ function play() {
             }
           }
         }
-        else if(eekVsBlock === "top" && eek.vy <= 0) {
+        else if(eekVsBlock === "top" && eek.vy <= 0 && eek.alpha > 0) {
           eek.vy = 0;
           if (b1.vy !== 0) {
             //Get eek's current level and find out the difference between it
@@ -524,7 +525,7 @@ function play() {
             score -= negativeScore;
             if (levelScore < 0) levelScore = 0;
             if (score < 0) score = 0;
-            console.log("score: " + score + ", levelScore: " + levelScore);
+            //console.log("score: " + score + ", levelScore: " + levelScore);
             if (levelScore === 0 && lethalScore) {
               endGame();
             } else {  
@@ -717,7 +718,6 @@ function removeEek() {
   eek.alpha = 0;
   eek.vx = 0;
   eek.vy = 0;
-  setNewPosition();
   //eek.x = 0;
   //eek.y = 0;
   eek.gravity = 0;
@@ -728,6 +728,7 @@ function removeEek() {
   });
 
   function reset() {
+    setNewPosition();
     var fadeInEek = g.fadeIn(eek, 0.02);
     fadeInEek.onComplete = function() {
       g.resume();
@@ -741,11 +742,13 @@ function removeEek() {
   function setNewPosition() {
     //Set eek to a position near the bottom of the deepest column
     var deepest = findDeepestColumn(),
-        randomX = (deepest.column * world.tilewidth) + ((world.tilewidth / 2) - (eek.width / 2));
+        randomX = (deepest.column * world.tilewidth) + ((world.tilewidth / 2) - (eek.halfWidth));
 
     //Set eek to the new position
     eek.y = world.height - 200 - (world.height - (deepest.depth * world.tileheight));
     eek.x = randomX;
+
+    //console.log("deepest.column: " + deepest.column + "randomX: " + randomX);
   }
 }
 
@@ -972,23 +975,24 @@ function createNewLevel(levelType) {
   blockEmitter.finished = false;
   blockEmitter.frameCounter = 0;
   blockEmitter.resume();
-  //blockEmitter.colorIndex = level - 1;
-  blockEmitter.colorIndex += 1
   
-  if (blockEmitter.colorIndex > blockEmitter.colors.length - 1) {
-    blockEmitter.colorIndex = 0;
-  }
-  
-  //Reduce the time by the block emitter's increment amount
-  blockEmitter.time -= blockEmitter.increment;
-
   //Reset game variables
   doorEntered = false;
   towerFinished = false;
   negativeScore = 0;
-  if (levelType !== "reset") levelScore = 0;
+  if (levelType !== "reset") {
+    levelScore = 0;
+    //Reduce the time by the block emitter's increment amount
+    blockEmitter.time -= blockEmitter.increment;
+    //blockEmitter.colorIndex = level - 1;
+    blockEmitter.colorIndex += 1
+    if (blockEmitter.colorIndex > blockEmitter.colors.length - 1) {
+      blockEmitter.colorIndex = 0;
+    }
+  }
   negativeScoreText.visible = false;
   currentLevelScoreText.fillStyle = "#7FFF00";
+  currentLevelScoreText.content = 0;
 }
 
 function burst(sprite) {
@@ -1027,7 +1031,7 @@ function buildGUI() {
   negativeScoreText.visible = false;
   //Level text
   levelText = g.text("1/99", "20px Futura, sans-serif", "white");
-  levelText.setPosition(240, 6);
+  levelText.setPosition(226, 6);
   //Reset button
   resetText = g.text("reset", "20px Futura, sans-serif", "white");
   resetButton = g.rectangle(64, world.tileheight - 3, "#2F2F2F");
