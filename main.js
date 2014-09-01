@@ -347,7 +347,7 @@ function setup() {
   lethalScoreValue = 1;
   lethalScore = false;
   maxHeight = 0;
-  level = 99;
+  level = 1;
   levelText.content = level + "/99";
   doorEntered = false;
   //The player can only score points for reaching a higher level
