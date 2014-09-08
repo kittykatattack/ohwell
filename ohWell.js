@@ -282,9 +282,6 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
   //An array to store the particles.
   ga.particles = [];
   
-  //An array to store shaking sprites.
-  ga.shakingSprites = [];
-
   //Set the game `state`.
   ga.state = undefined;
 
@@ -453,14 +450,6 @@ GA.create = function(width, height, setup, assetsToLoad, load) {
       }
     }
     
-    //Update all the shaking sprites in the game.
-    if (ga.shakingSprites.length > 0) {
-      for(var l = ga.shakingSprites.length - 1; l >= 0; l--) {
-        var shakingSprite = ga.shakingSprites[l];
-        shakingSprite.updateShake();
-      }
-    }
-
     //Update the pointer for drag and drop.
     if(ga.dragAndDrop) {
       ga.pointer.updateDragAndDrop();
@@ -3416,10 +3405,10 @@ GA.custom = function(ga) {
       if (counter >= 10) {
         sprite.x = startX;
         sprite.y = startY;
-        ga.shakingSprites.splice(ga.shakingSprites.indexOf(sprite), 1);
+        ga.particles.splice(ga.particles.indexOf(sprite), 1);
       }
     };
-    ga.shakingSprites.push(sprite);
+    ga.particles.push(sprite);
   }
 };
 (function() {
