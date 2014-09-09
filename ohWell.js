@@ -3393,7 +3393,7 @@ GA.custom = function(ga) {
     
     magnitude = magnitude || 64;    
     
-    sprite.updateShake = function() {
+    sprite.update = function() {
       if (counter < 10) {
         sprite.x = startX;
         sprite.y = startY;
