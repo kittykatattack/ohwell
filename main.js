@@ -131,7 +131,7 @@ function setup() {
   eek.gid = 1;
 
   //Position eek in the world at the bottom 1/4 of the canvas
-  world.put.bottom(eek, 0, -(g.canvas.height / 4));
+  world.putBottom(eek, 0, -(g.canvas.height / 4));
 
   //Make a camera a center it over eek
   //camera = worldCamera(world, g.canvas);
@@ -969,7 +969,7 @@ function createNewLevel(levelType) {
   eek.vx = 0;
 
   //Position eek in the world at the bottom 1/4 of the canvas
-  world.put.bottom(eek, 0, -(g.canvas.height / 4));
+  world.putBottom(eek, 0, -(g.canvas.height / 4));
 
   //Start the emitter
   blockEmitter.finished = false;
@@ -1037,7 +1037,7 @@ function buildGUI() {
   resetButton = g.rectangle(64, world.tileheight - 3, "#2F2F2F");
   resetButton.addChild(resetText);
   resetText.setPosition(8, 2);
-  statusBar.put.right(resetButton, -resetButton.width, 0);
+  statusBar.putRight(resetButton, -resetButton.width, 0);
   resetButton.interactive = true;
   resetButton.over = function() {
     resetText.fillStyle = "#7FFF00";
@@ -1076,7 +1076,7 @@ function buildGUI() {
   levelStartButton = g.group(buttonBackground, buttonText);
   buttonText.x = 8;
   buttonText.y = 4;
-  levelTitleScene.put.bottom(levelStartButton, 0, -g.canvas.height / 4);
+  levelTitleScene.putBottom(levelStartButton, 0, -g.canvas.height / 4);
   levelStartButton.interactive = true;
   levelTitleScene.add(levelMessageText, levelScoreText, levelStartButton);
   levelTitleScene.x = g.canvas.width;
